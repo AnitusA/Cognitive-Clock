@@ -25,7 +25,7 @@ const TEAM_COLORS = {
 function App() {
     // Shuffle questions once at app start with category rotation
     const shuffledQuestions = useMemo(() => shuffleQuestionsByCategory(QUESTIONS), []);
-    const [teams, setTeams] = useState({
+    const defaultTeams = {
         A: {
             time: 120,
             points: 0,
@@ -86,7 +86,16 @@ function App() {
             timeoutOccurred: false,
             fallbackAvailable: false
         }
+    };
+
+    const [teams, setTeams] = useState(() => {
+        const saved = localStorage.getItem('cognitive-clock-teams');
+        return saved ? JSON.parse(saved) : defaultTeams;
     });
+    // Persist teams to localStorage on change
+    React.useEffect(() => {
+        localStorage.setItem('cognitive-clock-teams', JSON.stringify(teams));
+    }, [teams]);
 
     const [activeTeam, setActiveTeam] = useState(null);
     const [questionStartTime, setQuestionStartTime] = useState(null);
@@ -308,6 +317,8 @@ function App() {
     const handleEndGame = () => {
         setGameEnded(true);
         setActiveTeam(null);
+        // Clear persisted teams on end game
+        localStorage.removeItem('cognitive-clock-teams');
         if (timerIntervalRef.current) {
             clearInterval(timerIntervalRef.current);
         }
@@ -380,11 +391,12 @@ function App() {
 
     const handleRestart = () => {
         setTeams({
-            A: { time: 60, points: 0, locked: false, frozen: false, consecutiveWrong: 0, doubleOrNothing: false, lifelinesUsed: 0, daresUsed: 0, maxLifelines: 3, maxDares: 3, eliminated: false, timeoutOccurred: false, fallbackAvailable: false },
-            B: { time: 60, points: 0, locked: false, frozen: false, consecutiveWrong: 0, doubleOrNothing: false, lifelinesUsed: 0, daresUsed: 0, maxLifelines: 3, maxDares: 3, eliminated: false, timeoutOccurred: false, fallbackAvailable: false },
-            C: { time: 60, points: 0, locked: false, frozen: false, consecutiveWrong: 0, doubleOrNothing: false, lifelinesUsed: 0, daresUsed: 0, maxLifelines: 3, maxDares: 3, eliminated: false, timeoutOccurred: false, fallbackAvailable: false },
-            D: { time: 60, points: 0, locked: false, frozen: false, consecutiveWrong: 0, doubleOrNothing: false, lifelinesUsed: 0, daresUsed: 0, maxLifelines: 3, maxDares: 3, eliminated: false, timeoutOccurred: false, fallbackAvailable: false }
+            A: { time: 120, points: 0, locked: false, frozen: false, consecutiveWrong: 0, doubleOrNothing: false, lifelinesUsed: 0, daresUsed: 0, maxLifelines: 3, maxDares: 3, eliminated: false, timeoutOccurred: false, fallbackAvailable: false },
+            B: { time: 120, points: 0, locked: false, frozen: false, consecutiveWrong: 0, doubleOrNothing: false, lifelinesUsed: 0, daresUsed: 0, maxLifelines: 3, maxDares: 3, eliminated: false, timeoutOccurred: false, fallbackAvailable: false },
+            C: { time: 120, points: 0, locked: false, frozen: false, consecutiveWrong: 0, doubleOrNothing: false, lifelinesUsed: 0, daresUsed: 0, maxLifelines: 3, maxDares: 3, eliminated: false, timeoutOccurred: false, fallbackAvailable: false },
+            D: { time: 120, points: 0, locked: false, frozen: false, consecutiveWrong: 0, doubleOrNothing: false, lifelinesUsed: 0, daresUsed: 0, maxLifelines: 3, maxDares: 3, eliminated: false, timeoutOccurred: false, fallbackAvailable: false }
         });
+        localStorage.removeItem('cognitive-clock-teams');
         setActiveTeam(null);
         setQuestionStartTime(null);
         setGameEnded(false);
