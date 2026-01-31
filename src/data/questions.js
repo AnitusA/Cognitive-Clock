@@ -11,14 +11,7 @@ const QUESTIONS_DATA = [
         category: 'Computer Science',
         difficulty: 'Easy'
     },
-    {
-        id: 2,
-        question: 'Which best describes a compiler?',
-        options: ['Executes code line by line', 'Converts code to machine code at once', 'Edits source code', 'Debugs programs'],
-        answer: 1,
-        category: 'Computer Science',
-        difficulty: 'Easy'
-    },
+   
     {
         id: 3,
         question: 'Which error is detected during execution?',
@@ -27,14 +20,7 @@ const QUESTIONS_DATA = [
         category: 'Computer Science',
         difficulty: 'Medium'
     },
-    {
-        id: 4,
-        question: 'Which principle does stack follow?',
-        options: ['FIFO', 'LIFO', 'Random', 'Priority'],
-        answer: 1,
-        category: 'Data Structures',
-        difficulty: 'Easy'
-    },
+    
     {
         id: 5,
         question: 'Time complexity measures:',
@@ -83,14 +69,7 @@ const QUESTIONS_DATA = [
         category: 'Python',
         difficulty: 'Easy'
     },
-    {
-        id: 11,
-        question: 'FIFO structure?',
-        options: ['Stack', 'Queue', 'Tree', 'Graph'],
-        answer: 1,
-        category: 'Data Structures',
-        difficulty: 'Easy'
-    },
+    
     {
         id: 12,
         question: 'Worst-case time of linear search?',
@@ -107,22 +86,8 @@ const QUESTIONS_DATA = [
         category: 'Computer Architecture',
         difficulty: 'Medium'
     },
-    {
-        id: 14,
-        question: 'Which is not an OS?',
-        options: ['Linux', 'Windows', 'macOS', 'Oracle'],
-        answer: 3,
-        category: 'Operating Systems',
-        difficulty: 'Easy'
-    },
-    {
-        id: 15,
-        question: 'Pointer stores:',
-        options: ['Value', 'Data type', 'Memory address', 'Variable name'],
-        answer: 2,
-        category: 'Programming Concepts',
-        difficulty: 'Medium'
-    },
+    
+   
 
     // Aptitude & Reasoning (Q16-Q25)
     {
@@ -225,22 +190,7 @@ const QUESTIONS_DATA = [
         category: 'Web Development',
         difficulty: 'Easy'
     },
-    {
-        id: 27,
-        question: 'What does CSS primarily control?',
-        options: ['Website logic', 'Website styling', 'Database structure', 'Page layout only'],
-        answer: 1,
-        category: 'Web Development',
-        difficulty: 'Easy'
-    },
-    {
-        id: 28,
-        question: 'Which of these is a Version Control System?',
-        options: ['Apache', 'MySQL', 'Git', 'Nginx'],
-        answer: 2,
-        category: 'Software Development',
-        difficulty: 'Easy'
-    },
+    
     {
         id: 29,
         question: 'What does API stand for?',
@@ -254,15 +204,7 @@ const QUESTIONS_DATA = [
         category: 'Technology',
         difficulty: 'Easy'
     },
-    {
-        id: 30,
-        question: 'Which field focuses on patterns in data?',
-        options: ['Web Development', 'Data Science', 'Networking', 'Cybersecurity'],
-        answer: 1,
-        category: 'Technology',
-        difficulty: 'Easy'
-    },
-
+    
     // Programming Fundamentals (Q31-Q40)
     {
         id: 31,

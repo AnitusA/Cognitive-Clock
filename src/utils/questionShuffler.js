@@ -82,24 +82,17 @@ export const shuffleQuestionsByCategory = (questions) => {
     categories.Aptitude = shuffleArray(categories.Aptitude);
     categories.CoreTech = shuffleArray(categories.CoreTech);
 
-    // 3. Interleave categories in rotation
+    // 3. Interleave categories in rotation, skipping empty ones
     const shuffled = [];
-    const categoryKeys = ['Programming', 'Aptitude', 'CoreTech'];
+    const nonEmptyCategoryKeys = ['Programming', 'Aptitude', 'CoreTech'].filter(cat => categories[cat].length > 0);
     let categoryIndex = 0;
 
     // Continue until all categories are exhausted
-    while (
-        categories.Programming.length > 0 ||
-        categories.Aptitude.length > 0 ||
-        categories.CoreTech.length > 0
-    ) {
-        const currentCategory = categoryKeys[categoryIndex % 3];
-
-        // If current category has questions, take one
+    while (nonEmptyCategoryKeys.some(cat => categories[cat].length > 0)) {
+        const currentCategory = nonEmptyCategoryKeys[categoryIndex % nonEmptyCategoryKeys.length];
         if (categories[currentCategory].length > 0) {
             shuffled.push(categories[currentCategory].shift());
         }
-
         categoryIndex++;
     }
 
