@@ -104,20 +104,17 @@ function App() {
 
     const timerIntervalRef = useRef(null);
 
-    // Timer effect - runs every 100ms when there's an active team
+    // Timer effect - runs every 100ms only when a question is assigned
     useEffect(() => {
-        if (activeTeam && !teams[activeTeam].locked && !teams[activeTeam].frozen && !teams[activeTeam].eliminated) {
+        if (activeTeam && questionStartTime && !teams[activeTeam].locked && !teams[activeTeam].frozen && !teams[activeTeam].eliminated) {
             timerIntervalRef.current = setInterval(() => {
                 setTeams(prev => {
                     const newTime = Math.max(0, prev[activeTeam].time - 0.1);
 
                     // Check if time reached zero
                     if (newTime <= 0 && prev[activeTeam].time > 0) {
-                        // Timeout occurred - check for fallback options
                         const timeoutResult = handleTimeout(prev[activeTeam]);
-
                         if (timeoutResult.shouldEliminate) {
-                            // No lifelines or dares remaining - immediate elimination
                             return {
                                 ...prev,
                                 [activeTeam]: {
@@ -130,7 +127,6 @@ function App() {
                                 }
                             };
                         } else {
-                            // Has fallback options - lock but don't eliminate yet
                             return {
                                 ...prev,
                                 [activeTeam]: {
@@ -160,11 +156,16 @@ function App() {
                 }
             };
         }
-    }, [activeTeam, teams]);
+        // Cleanup if no active question
+        return () => {
+            if (timerIntervalRef.current) {
+                clearInterval(timerIntervalRef.current);
+            }
+        };
+    }, [activeTeam, questionStartTime, teams]);
 
     const handleAssignQuestion = (teamName) => {
         if (teams[teamName].frozen) {
-            // Unfreeze and skip turn
             setTeams(prev => ({
                 ...prev,
                 [teamName]: {
@@ -174,13 +175,17 @@ function App() {
             }));
             return;
         }
-
         setActiveTeam(teamName);
         setQuestionStartTime(Date.now());
+        // Timer will start via useEffect
     };
 
     const handleCorrectAnswer = () => {
         if (!activeTeam) return;
+        // Stop timer immediately
+        if (timerIntervalRef.current) {
+            clearInterval(timerIntervalRef.current);
+        }
 
         const timeTaken = (Date.now() - questionStartTime) / 1000;
         const team = teams[activeTeam];
@@ -189,7 +194,7 @@ function App() {
             ...prev,
             [activeTeam]: {
                 ...prev[activeTeam],
-                time: calculateTimeUpdate(team.time, timeTaken, true, team.doubleOrNothing),
+                time: Math.max(0, prev[activeTeam].time + 10), // Add 10 seconds
                 points: calculatePointsUpdate(team.points, true, team.doubleOrNothing),
                 consecutiveWrong: 0,
                 doubleOrNothing: false
@@ -202,6 +207,10 @@ function App() {
 
     const handleWrongAnswer = () => {
         if (!activeTeam) return;
+        // Stop timer immediately
+        if (timerIntervalRef.current) {
+            clearInterval(timerIntervalRef.current);
+        }
 
         const timeTaken = (Date.now() - questionStartTime) / 1000;
         const team = teams[activeTeam];
@@ -211,18 +220,16 @@ function App() {
             ...prev,
             [activeTeam]: {
                 ...prev[activeTeam],
-                time: calculateTimeUpdate(team.time, timeTaken, false, team.doubleOrNothing),
+                time: Math.max(0, prev[activeTeam].time - 5), // Subtract 5 seconds
                 points: calculatePointsUpdate(team.points, false, team.doubleOrNothing),
                 consecutiveWrong: newConsecutiveWrong,
                 doubleOrNothing: false
             }
         }));
 
-        // Trigger time penalty visual feedback
         setTimePenaltyAlert(activeTeam);
         setTimeout(() => setTimePenaltyAlert(null), 1500);
 
-        // Check if dare should trigger (2 consecutive wrong)
         if (newConsecutiveWrong >= 2) {
             setTimeout(() => {
                 triggerDare(activeTeam);
@@ -280,14 +287,15 @@ function App() {
     };
 
     const handleDareComplete = () => {
-        if (dareTeam) {
-            // Increment dare counter - NO time bonus, NO unlock
+        if (dareTeam && currentDare) {
+            // Increment dare counter and add time bonus
             setTeams(prev => ({
                 ...prev,
                 [dareTeam]: {
                     ...prev[dareTeam],
                     daresUsed: prev[dareTeam].daresUsed + 1,
-                    consecutiveWrong: 0
+                    consecutiveWrong: 0,
+                    time: Math.max(0, prev[dareTeam].time + (currentDare.reward || 0))
                 }
             }));
         }

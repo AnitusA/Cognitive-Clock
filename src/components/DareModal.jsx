@@ -36,6 +36,11 @@ const DareModal = ({ isOpen, onClose, onComplete, dare, teamName }) => {
                             <span>{dare.type}</span>
                         </div>
                         <div className="dare-description">{dare.description}</div>
+                        {dare.reward && (
+                            <div className="dare-reward" style={{ color: 'var(--color-success)', fontWeight: 500, marginTop: '0.5rem' }}>
+                                🎁 Reward: +{dare.reward} seconds
+                            </div>
+                        )}
                         {dare.hint && (
                             <div className="dare-hint">
                                 💡 Hint: {dare.hint}
