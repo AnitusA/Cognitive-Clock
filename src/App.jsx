@@ -90,7 +90,17 @@ function App() {
 
     const [teams, setTeams] = useState(() => {
         const saved = localStorage.getItem('cognitive-clock-teams');
-        return saved ? JSON.parse(saved) : defaultTeams;
+        if (saved) {
+            try {
+                const parsed = JSON.parse(saved);
+                // If any team has less than 120 seconds, reset all to default
+                const all120 = ['A','B','C','D'].every(t => parsed[t] && parsed[t].time >= 120);
+                return all120 ? parsed : defaultTeams;
+            } catch {
+                return defaultTeams;
+            }
+        }
+        return defaultTeams;
     });
     // Persist teams to localStorage on change
     React.useEffect(() => {
